@@ -3,6 +3,7 @@ const app = express();
 
 const db = require("./db");
 require('dotenv').config();
+const passport = require('./auth');
 
 
 
@@ -11,9 +12,20 @@ app.use(bodyParser.json());
 
 const PORT = process.env.PORT || 3000
 
+// Middleware fuction
+
+const logReq=(req,res,next) => {
+  console.log(`[${new Date().toLocaleString()}] requext made to : ${req.originalUrl}`);
+  next();
+}
+app.use(logReq);
+
 //app.use(express.json());
 
-app.get("/", (req, res) => {
+app.use(passport.initialize());
+const localAuthMiddleware = passport.authenticate('local', {session: false})
+
+app.get("/",(req, res) => {
   res.send("helllo world");
 });
 
